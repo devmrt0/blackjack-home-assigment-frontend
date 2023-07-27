@@ -94,11 +94,17 @@ class Blackjack extends Component {
 
   hit = event => {
     this.dealCards(1, 'playerHand');
+    this.setState({
+      counter: 30,
+    });
   }
 
   stay = async event => {
     while (this.totalHand('dealerHand') < 17) {
       await this.dealCards(1, 'dealerHand');
+      this.setState({
+        counter: 30,
+      });
     }
 
     if (this.totalHand('dealerHand') > 21) {
