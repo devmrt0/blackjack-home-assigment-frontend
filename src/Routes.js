@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Switch, Route, Redirect } from "react-router-dom";
-import Homepage from './Homepage';
 import Blackjack from './Blackjack';
 
 class Routes extends Component {
@@ -9,7 +8,7 @@ class Routes extends Component {
       <div>
         <Switch>
           <Route exact path="/">
-            <Homepage />
+            <Blackjack />
           </Route>
           <Route exact path="/blackjack">
             <Blackjack />

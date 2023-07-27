@@ -1,6 +1,5 @@
 {
   "name": "react-blackjack",
-  "homepage": "https://eyad-a.github.io/react-blackjack",
   "version": "0.1.0",
   "private": false,
   "dependencies": {

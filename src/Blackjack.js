@@ -14,13 +14,15 @@ class Blackjack extends Component {
       deck_id: '',
       playerHand: [],
       dealerHand: [],
-      inProgress: true
+      inProgress: true,
+      counter: 30,
+      handObject: {},
     }
   }
 
   componentDidMount = () => {
     axios
-      .get('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1')
+      .get('http://localhost:7000/find')
       .then(response => {
         const newState = {
           deck_id: response.data.deck_id
@@ -34,10 +36,14 @@ class Blackjack extends Component {
     if (!this.state.inProgress) {
       return;
     }
+    if (this.state.inProgress == true && this.state.counter > 0) {
+      setTimeout(() => this.setTimer(), 1300)
+    }
     if (this.totalHand('playerHand') > 21 && this.state.inProgress) {
       this.setState({
-        gameStatus: 'Player Busted!',
-        inProgress: false
+        gameStatus: 'playerName Busted!',
+        inProgress: false,
+        handObject: { winner: this.state.dealerHand }
       });
     }
   }
@@ -45,6 +51,13 @@ class Blackjack extends Component {
   deckHasBeenShuffled = () => {
     this.dealCards(2, 'playerHand');
     this.dealCards(2, 'dealerHand');
+  }
+
+  setTimer = () => {
+    if (this.state.counter > 0)
+      this.setState({
+        counter: this.state.counter - 1,
+      });
   }
 
   dealCards = async (numOfCards, whichHand) => {
@@ -77,7 +90,8 @@ class Blackjack extends Component {
     if (this.totalHand('dealerHand') > 21) {
       this.setState({
         inProgress: false,
-        gameStatus: 'Dealer Busted!'
+        gameStatus: 'delay Busted!',
+        handObject: { winner: this.state.playerHand }
       });
       return;
     }
@@ -85,7 +99,8 @@ class Blackjack extends Component {
     if (this.totalHand('playerHand') > this.totalHand('dealerHand')) {
       this.setState({
         inProgress: false,
-        gameStatus: 'Player Wins!'
+        gameStatus: 'playerName Wins!',
+        handObject: { winner: this.state.playerHand }
       });
       return;
     }
@@ -93,7 +108,8 @@ class Blackjack extends Component {
     if (this.totalHand('playerHand') < this.totalHand('dealerHand')) {
       this.setState({
         inProgress: false,
-        gameStatus: 'Dealer Wins!'
+        gameStatus: 'delay Wins!',
+        handObject: { winner: this.state.dealerHand }
       });
       return;
     }
@@ -101,7 +117,8 @@ class Blackjack extends Component {
     if (this.totalHand('playerHand') === this.totalHand('dealerHand')) {
       this.setState({
         inProgress: false,
-        gameStatus: 'Tie!'
+        gameStatus: 'Draw!',
+        handObject: { draw: this.state.playerHand }
       });
       return;
     }
@@ -139,7 +156,6 @@ class Blackjack extends Component {
             <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span className="navbar-toggler-icon"></span></button>
             <div className="collapse navbar-collapse" id="navbarSupportedContent">
               <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-                <li className="nav-item"><Link className="nav-link" to="/">Home</Link></li>
                 <li className="nav-item"><Link className="nav-link active" to="/blackjack">Play</Link></li>
               </ul>
             </div>
@@ -149,6 +165,12 @@ class Blackjack extends Component {
         <h1 className="top-section">Blackjack</h1>
         <div className="center">
           <p className="game-status">{this.state.gameStatus}</p>
+          {(this.state.handObject.winner != undefined && this.state.handObject.winner.length > 0 ) &&
+             <Hand cards={this.state.handObject.winner} />
+          }
+          {(this.state.handObject.draw != undefined && this.state.handObject.draw.length > 0) &&
+             <Hand cards={this.state.handObject.draw} />
+          }
         </div>
         <div className="center">
           <button className="reset hidden">Play Again!</button>
@@ -159,7 +181,7 @@ class Blackjack extends Component {
             <button className={`hit ${this.hideButtons}`} onClick={this.hit}>
               Hit
             </button>
-            <p>Your Cards:</p>
+            <p>playerName Cards:</p>
             <p className="player-total">{this.totalHand('playerHand')}</p>
             <div className="player-hand">
               <Hand cards={this.state.playerHand} />
@@ -170,7 +192,7 @@ class Blackjack extends Component {
             <button className={`stay ${this.hideButtons}`} onClick={this.stay}>
               Stay
             </button>
-            <p>Dealer Cards:</p>
+            <p>delay Cards:</p>
             <p className="dealer-total">{this.totalHand('dealerHand')}</p>
             <div className="dealer-hand">
               <Hand cards={this.state.dealerHand} />
@@ -181,7 +203,9 @@ class Blackjack extends Component {
           <button onClick={this._newGame} className="reset">
             New Game
           </button>
+          <span>CountDown:{this.state.counter}</span>
         </div>
+
       </div>
     )
   }
