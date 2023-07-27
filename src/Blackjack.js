@@ -45,6 +45,8 @@ class Blackjack extends Component {
         inProgress: false,
         handObject: { winner: this.state.dealerHand }
       });
+      this.getObject(this.state.handObject);
+      this.getWinnerObject(this.state.handObject.winner);
     }
   }
 
@@ -58,6 +60,18 @@ class Blackjack extends Component {
       this.setState({
         counter: this.state.counter - 1,
       });
+  }
+
+  getObject = (object) => {
+    return object
+  }
+
+  getWinnerObject = (object) => {
+    return {winner: <Hand cards={object} /> }
+  }
+
+  getDrawObject = (object) => {
+    return {draw: <Hand cards={object} /> }
   }
 
   dealCards = async (numOfCards, whichHand) => {
@@ -93,6 +107,8 @@ class Blackjack extends Component {
         gameStatus: 'delay Busted!',
         handObject: { winner: this.state.playerHand }
       });
+      this.getObject(this.state.handObject);
+      this.getWinnerObject(this.state.handObject.winner);
       return;
     }
 
@@ -102,6 +118,8 @@ class Blackjack extends Component {
         gameStatus: 'playerName Wins!',
         handObject: { winner: this.state.playerHand }
       });
+      this.getObject(this.state.handObject);
+      this.getWinnerObject(this.state.handObject.winner);
       return;
     }
 
@@ -111,6 +129,8 @@ class Blackjack extends Component {
         gameStatus: 'delay Wins!',
         handObject: { winner: this.state.dealerHand }
       });
+      this.getObject(this.state.handObject);
+      this.getWinnerObject(this.state.handObject.winner);
       return;
     }
 
@@ -120,6 +140,8 @@ class Blackjack extends Component {
         gameStatus: 'Draw!',
         handObject: { draw: this.state.playerHand }
       });
+      this.getObject(this.state.handObject);
+      this.getDrawObject(this.state.handObject.draw);
       return;
     }
   }
@@ -147,6 +169,8 @@ class Blackjack extends Component {
   }
 
   render() {
+    let winnerobject = {winner: <Hand cards={this.state.handObject.winner} />}
+    let drawobject = {draw: <Hand cards={this.state.handObject.draw} />}
     return (
       <div className="blackjack-page">
 
@@ -165,11 +189,24 @@ class Blackjack extends Component {
         <h1 className="top-section">Blackjack</h1>
         <div className="center">
           <p className="game-status">{this.state.gameStatus}</p>
-          {(this.state.handObject.winner != undefined && this.state.handObject.winner.length > 0 ) &&
-             <Hand cards={this.state.handObject.winner} />
+          {(this.state.handObject.winner != undefined && this.state.handObject.winner.length > 0) &&
+            "{winner:"
+          }
+          {(this.state.handObject.winner != undefined && this.state.handObject.winner.length > 0) &&
+            <Hand cards={this.state.handObject.winner} />
+           
+          }
+          {(this.state.handObject.winner != undefined && this.state.handObject.winner.length > 0) &&
+            "}"
           }
           {(this.state.handObject.draw != undefined && this.state.handObject.draw.length > 0) &&
-             <Hand cards={this.state.handObject.draw} />
+            "{draw:"
+          }
+          {(this.state.handObject.draw != undefined && this.state.handObject.draw.length > 0) &&
+            <Hand cards={this.state.handObject.draw} />
+          }
+          {(this.state.handObject.draw != undefined && this.state.handObject.draw.length > 0) &&
+            "}"
           }
         </div>
         <div className="center">
